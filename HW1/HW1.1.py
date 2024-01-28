@@ -24,14 +24,14 @@ plt.show()
 # --------------- (b) ---------------
 # ----- (1) -----
 # Set the seed for reproducibility
-np.random.seed(42)
+np.random.seed(4)
 
 # Draw 1000 random samples from N(0, 1)
 samples = np.random.normal(0, 1, 1000)
 
 
 # ----- (2) (3) (4) -----
-# Create histograms
+# set size of the histograms
 plt.figure(figsize=(12, 6))
 
 # Create histogram 1
@@ -39,7 +39,6 @@ plt.subplot(1, 2, 1)
 
 # Use density=True to normalize the histogram (make total area = 1)
 plt.hist(samples, bins=4, color='blue', edgecolor='black', density=True)  
-plt.title('Histogram with 4 Bins')
 plt.title('Histogram with 4 Bins')
 
 # Estimate mean and standard deviation using scipy.stats.norm.fit
@@ -51,9 +50,11 @@ print("Estimated mean and standard deviation:", mean, standard_dev)
 xmin, xmax = plt.xlim() # get the limit of the figure
 x = np.linspace(xmin, xmax, 100)
 
-# Fit a Gaussian curve and plot it
-p = norm.pdf(x, mean, standard_dev)  # Use scipy.stats.norm.pdf to generate the PDF
-plt.plot(x, p, 'k', linewidth=2)  # Plot the fitted Gaussian curve in black
+# Use scipy.stats.norm.pdf to generate the PDF
+p = norm.pdf(x, mean, standard_dev)  
+
+# Plot the fitted Gaussian curve in black
+plt.plot(x, p, 'k', linewidth=2)  
 
 # Create histogram 2
 plt.subplot(1, 2, 2)
@@ -81,25 +82,33 @@ plt.close()
 # It is useful for examining the distribution more closely, especially when the data has subtle features or variations.
 
 
-# --------------- (c) ---------------
+# --------------- (c) optimal bin ---------------
 # ----- (1) -----
 # Define the range of possible bin values (m)
 m_values = np.linspace(1, 200, 200)
-n = len(samples)  # Total number of samples
 
-# Initialize arrays to store J values and corresponding h values
+# Total number of samples
+n = len(samples)  
+
+# Initialize arrays to store J values
 J_values = np.zeros_like(m_values)
+
+#  h = (max data value−min data value)/m
 h_values = (1 - 0) / m_values  # Calculate h for each m
 
-# Loop over different values of m
+# Loop over different values of m (i = index, m = value)
 for i, m in enumerate(m_values):
-    # Create histogram with m bins
+    # Create histogram with m bins. 
+    # hist = counts of samples in each bin of the histogram, 
+    # bin_edges = the edges of the bins
     hist, bin_edges = np.histogram(samples, bins = int(m), density=True)
     
     # Calculate empirical probabilities for each bin
+    # np.diff(bin_edges) = the width of each bin.
+    # provides an estimate of the area under the histogram bar for that bin. In a probability density histogram (when density=True` is used), this area is proportional to the probability of a random sample falling within that bin.
     empirical_probabilities = hist * np.diff(bin_edges)
     
-    # Calculate pj
+    # Calculate pj (empirical probability of a sample falling into each bin)
     pj = np.sum(empirical_probabilities ** 2)
     
     # Calculate J for the current m
@@ -114,7 +123,7 @@ plt.show()
 
 # ----- (2) -----
 # Find the index of the minimum value in J_values
-indexx = np.argmin(J_values) - 1
+indexx = np.argmin(J_values) 
 print(indexx)
 
 # ----- (3) -----
