@@ -134,17 +134,8 @@ samples = np.random.normal(0, 1, 1000)
 plt.hist(samples, bins = indexx, color='blue', edgecolor='black', density=True)  
 plt.title(f'Histogram with {indexx} Bins')
 
-# Estimate mean and standard deviation using scipy.stats.norm.fit
-mean, standard_dev = norm.fit(samples)  
-
-# Report the estimated values
-print("Estimated mean and standard deviation:", mean, standard_dev)
-
-xmin, xmax = plt.xlim() # get the limit of the figure
-x = np.linspace(xmin, xmax, 100)
-
 # Fit a Gaussian curve and plot it
-p = norm.pdf(x, mean, standard_dev)  # Use scipy.stats.norm.pdf to generate the PDF
+p = norm.pdf(x, 0, 1)  # Use scipy.stats.norm.pdf to generate the PDF
 plt.plot(x, p, 'k', linewidth=2)  # Plot the fitted Gaussian curve in black
 
 plt.show()

@@ -16,6 +16,7 @@ def Fx(X1, X2):
 x1_values = np.linspace(-1, 5, 100)
 x2_values = np.linspace(0, 10, 100)
 X1, X2 = np.meshgrid(x1_values, x2_values)
+
 Z = Fx(X1, X2)
 
 # Plot the contours using matplotlib.pyplot.contour
