@@ -20,7 +20,7 @@ with open("female_train_data.csv", "r") as csv_file:
             modified_rows_female = np.array(row)
             counter += 1
             continue
-        row[2] = float(row[2]) / 100
+        row[2] = float(row[2]) / 1000
         row[1] = float(row[1]) / 10
         modified_rows_female = np.row_stack((modified_rows_female, np.array(row, dtype=float)))
     
@@ -69,7 +69,7 @@ print("\nExercise 2")
 # 2. Pseudoinverse: numpy.linalg.pinv(). theta hat = (A^T * A)^(pseudoinvers) * A^T * y.
 
 
-# ---------------------------------------- (b) ----------------------------------------
+# ---------------------------------------- (b: analytic expression) ----------------------------------------
 # Get A
 # Round to decimals 3
 data_m = np.around(modified_rows_male[1:,1:].astype(float), decimals = 3) 
@@ -87,7 +87,7 @@ y = np.hstack((np.array(np.ones(len_m)), np.array(-1.0*np.ones(len_f))))
 theta_hat = np.dot(np.dot(np.linalg.pinv(np.dot(A.T,A)),A.T),y)
 print(theta_hat)
 
-# ---------------------------------------- (c) ----------------------------------------
+# ---------------------------------------- (c: CVXPY) ----------------------------------------
 # Define variables
 theta = cp.Variable(A.shape[1])
 
@@ -105,4 +105,79 @@ theta_hat_cvxpy = theta.value
 
 print(theta_hat_cvxpy)
 
+# make sure to understand part d and e 
 # ---------------------------------------- (d) ----------------------------------------
+# See note
+# optimal step size, a^k = 
+
+
+# ---------------------------------------- (e: gradient descent) ----------------------------------------
+# gradient descent: x^(t+1) = x^t - Eta * gradient of f(x^t). (covered in Week 4. x is "theta" in previous lectures)
+# x is parameter to optimized, Eta is step size, and f() is cost function.
+
+# initialize all elements
+dimension = A.shape[1] # 3 here
+max_iteration = 50000
+cost = np.zeros(max_iteration)
+theta = [0., 0., 0.] # Initializing theta with zeros 
+AtA = np.dot(A.T, A) 
+store_all_theta = np.zeros((dimension, max_iteration + 1))
+
+# gradient descent algo
+for iter in range(max_iteration):
+    # ∇E train = -d = 2 x^T(x * theta - y)  (direction. Covered in Week 4. d = negative of gradient f(x^t))
+    E_train = 2 * (np.dot(AtA, theta) - np.dot(A.T, y))
+    d = - E_train
+    alpha = (np.dot(np.dot(y.T, A), d) - np.dot(np.dot(theta,AtA),d)) / np.sum((np.dot(A,d))**2)
+    theta = theta + alpha * d
+    store_all_theta[:, iter + 1] = theta
+    cost[iter] = np.linalg.norm(y - np.dot(A, theta))**2 / A.shape[0]
+
+print(theta)
+
+
+# ---------------------------------------- (f) ----------------------------------------
+plt.semilogx(cost,'o',linewidth=8)
+plt.show()
+
+
+# ---------------------------------------- (g) ----------------------------------------
+# initialize all elements
+beta = 0.9
+dimension = A.shape[1] # 3 here
+max_iteration = 50000
+cost = np.zeros(max_iteration)
+theta = [0., 0., 0.] 
+AtA = np.dot(A.T, A) 
+store_all_theta = np.zeros((dimension, max_iteration + 1))
+
+# gradient descent algo
+# ∇E train = -d = 2 x^T(x * theta - y)  (direction. Covered in Week 4. d = negative of gradient f(x^t))
+iter = 0
+E_train = 2 * (np.dot(AtA, theta) - np.dot(A.T, y))
+E_train_lastime = 2 * (np.dot(AtA, store_all_theta[:, iter]) - np.dot(A.T, y)) # changed
+d = - (beta * E_train_lastime + (1 - beta) * E_train) # changed
+alpha = (np.dot(np.dot(y.T, A), d) - np.dot(np.dot(theta,AtA),d)) / np.sum((np.dot(A,d))**2)
+theta = theta + alpha * d
+store_all_theta[:, iter + 1] = theta
+cost[iter] = np.linalg.norm(y - np.dot(A, theta))**2 / A.shape[0]
+
+for iter in range(1, max_iteration):
+    E_train = 2 * (np.dot(AtA, theta) - np.dot(A.T, y))
+    E_train_lastime = 2 * (np.dot(AtA, store_all_theta[:, iter - 1]) - np.dot(A.T, y)) # changed and diff to iter 0
+    d = - (beta * E_train_lastime + (1 - beta) * E_train) # changed
+    alpha = (np.dot(np.dot(y.T, A), d) - np.dot(np.dot(theta,AtA),d)) / np.sum((np.dot(A,d))**2)
+    theta = theta + alpha * d
+    store_all_theta[:, iter + 1] = theta
+    cost[iter] = np.linalg.norm(y - np.dot(A, theta))**2 / A.shape[0]
+
+print(theta)
+
+
+# ---------------------------------------- (h) ----------------------------------------
+plt.semilogx(cost,'o',linewidth=8)
+plt.ylim(0.5, 1.0)  # Set the y-axis limits
+plt.show()
+
+
+# ---------------------------------------- Exercise 3: viualization and testing ----------------------------------------
