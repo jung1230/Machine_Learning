@@ -17,7 +17,7 @@ Y = plt.imread('cat_grass.jpg') / 255
 # -------------------- (b: train by getting parameters) --------------------
 row1, col1 = np.shape(train_cat)
 u1 = np.zeros(row1)
-# Loop through each row of the array and calculate the mean of the current row( SHOULD I CHANGE THIS TO COL?????????)
+# Loop through each row of the array and calculate the mean of the current row (64 × K1) 
 for i in range(row1):
     u1[i] = np.mean(train_cat[i,:])
 
@@ -137,10 +137,12 @@ for i in range(rowp - 8):
         PofXgivenC0 = 1/(((2*np.pi)**(d/2)) * ((abs_Sigma0)**(0.5))) * np.exp(-0.5 * (block - u0).T @ inv_Sigma0 @ (block - u0))
         div[i,j] = np.log(PofXgivenC1[0,0] / PofXgivenC0[0,0]) # !!!! try:change to np.sum and mean!!!!
 
+
+# print(np.mean(div)) # -54
 n_tau = 50
 PF = np.zeros(n_tau)
 PD = np.zeros(n_tau)
-tauset = np.linspace(-200,200,n_tau)
+tauset = np.linspace(-150,50,n_tau)
 for k in range(n_tau):
     tau = (tauset[k])
     prediction = np.zeros(Y.shape)
@@ -187,7 +189,7 @@ X0 = train_grass.T
 A = np.vstack((X1, X0))
 Ones4X1 = np.ones((col1,1))
 Ones4X0 = np.ones((col0,1)) 
-b = np.vstack((Ones4X1,-1 * Ones4X0))
+b = np.vstack((Ones4X1, -1 * Ones4X0))
 
 theta = cvx.Variable((d,1))
 objective = cvx.Minimize(cvx.sum_squares(A @ theta - b)) # sum_squares for 2-norm, norm for 1-norm
@@ -203,10 +205,11 @@ for i in range(rowp - 8):
         block = np.reshape(block,(64,1))
         thetaX[i,j] = theta_hat.T @ block
 
+# print(np.mean(thetaX)) # -0.606
 n_tau = 50
 PF = np.zeros(n_tau)
 PD = np.zeros(n_tau)
-tauset = np.linspace(-1.2, -0.1, n_tau)
+tauset = np.linspace(-2, 0, n_tau)
 for k in range(n_tau):
     tau = (tauset[k])
     prediction = np.zeros(Y.shape)

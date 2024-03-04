@@ -43,6 +43,7 @@ u0 = np.zeros(row0)
 for i in range(row0):
     u0[i] = np.mean(train_grass[i,:])
 
+# '''
 div = np.zeros((rowp,colp))
 for i in range(rowp - 8):
     for j in range(colp - 8):
@@ -52,10 +53,11 @@ for i in range(rowp - 8):
         PofXgivenC0 = 1/(((2*np.pi)**(d/2)) * ((abs_Sigma0)**(0.5))) * np.exp(-0.5 * (block - u0).T @ inv_Sigma0 @ (block - u0))
         div[i,j] = np.log(PofXgivenC1[0,0] / PofXgivenC0[0,0]) # !!!! try:change to np.sum and mean!!!!
 
+print(np.mean(div)) # -54
 n_tau = 50
 PF = np.zeros(n_tau)
 PD = np.zeros(n_tau)
-tauset = np.linspace(-200,200,n_tau)
+tauset = np.linspace(-150, 50,n_tau)
 for k in range(n_tau):
     tau = (tauset[k])
     prediction = np.zeros(Y.shape)
@@ -96,6 +98,7 @@ for i in range(rowp - 8):
 
 plt.scatter(false_positive / total_negative4truth, true_positive / total_positive4truth, s=100, c='red', label='Specific Point')  
 plt.show() 
+# '''
 
 # -------------------- (d) --------------------
 X1 = train_cat.T
@@ -118,11 +121,11 @@ for i in range(rowp - 8):
         block = Y[i: i+8, j: j+8]
         block = np.reshape(block,(64,1))
         thetaX[i,j] = theta_hat.T @ block
-
+# print(np.mean(thetaX)) # -0.606
 n_tau = 50
 PF = np.zeros(n_tau)
 PD = np.zeros(n_tau)
-tauset = np.linspace(-1.2, -0.1, n_tau)
+tauset = np.linspace(-2, 0, n_tau)
 for k in range(n_tau):
     tau = (tauset[k])
     prediction = np.zeros(Y.shape)
