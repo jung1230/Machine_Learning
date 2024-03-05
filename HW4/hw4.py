@@ -128,6 +128,6 @@ for i in range(N):
 
 plt.scatter(xclass0[:,0].tolist(), xclass0[:,1].tolist(), c='b')
 plt.scatter(xclass1[:,0].tolist(), xclass1[:,1].tolist(), c='g')
-plt.contour(TestRange, TestRange, decision_boundary > 0.5) # set 0.5 to make it only one boundary
+plt.contour(TestRange, TestRange, decision_boundary) 
+# plt.contour(TestRange, TestRange, decision_boundary > 0.5) # set 0.5 to make it only one boundary
 plt.show()
-
