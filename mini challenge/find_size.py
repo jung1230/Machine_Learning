@@ -11,7 +11,7 @@ def get_image_dimensions(directory):
                 filepath = os.path.join(root, file)
                 img = cv2.imread(filepath)
                 if img is None:
-                    # print(f"Unable to read image: {filepath}")
+                    
                     continue
                 height, width, _ = img.shape
                 min_width = min(min_width, width)
@@ -22,11 +22,11 @@ def get_image_dimensions(directory):
     return min_width, min_height, max_width, max_height
 
 if __name__ == "__main__":
-    data_dir = 'main_data/train'  # Change this to your main data directory
+    data_dir = 'main_data/train'  
     min_width, min_height, max_width, max_height = get_image_dimensions(data_dir)
     print("Minimum Image Dimensions (Width x Height):", min_width, "x", min_height)
     print("Maximum Image Dimensions (Width x Height):", max_width, "x", max_height)
-    data_dir = 'main_data/validation'  # Change this to your main data directory
+    data_dir = 'main_data/validation'  
     min_width, min_height, max_width, max_height = get_image_dimensions(data_dir)
     print("Minimum Image Dimensions (Width x Height):", min_width, "x", min_height)
     print("Maximum Image Dimensions (Width x Height):", max_width, "x", max_height)
